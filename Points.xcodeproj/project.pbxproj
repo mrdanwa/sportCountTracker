@@ -20,6 +20,7 @@
 		A6B8C1202C8A017F005081D7 /* PointsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B8C11F2C8A017F005081D7 /* PointsView.swift */; };
 		A6B8C1222C8A018E005081D7 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B8C1212C8A018E005081D7 /* HistoryView.swift */; };
 		A6B8C1242C8A019A005081D7 /* Match.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B8C1232C8A019A005081D7 /* Match.swift */; };
+		A6D4E9A62CB3F5FF005F549B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D4E9A52CB3F5FC005F549B /* Settings.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +78,7 @@
 		A6B8C11F2C8A017F005081D7 /* PointsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointsView.swift; sourceTree = "<group>"; };
 		A6B8C1212C8A018E005081D7 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		A6B8C1232C8A019A005081D7 /* Match.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Match.swift; sourceTree = "<group>"; };
+		A6D4E9A52CB3F5FC005F549B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +138,7 @@
 				A6B8C11F2C8A017F005081D7 /* PointsView.swift */,
 				A6B8C1212C8A018E005081D7 /* HistoryView.swift */,
 				A6B8C1232C8A019A005081D7 /* Match.swift */,
+				A6D4E9A52CB3F5FC005F549B /* Settings.swift */,
 				A61714B62CAE7ED800DC7403 /* SettingsView.swift */,
 			);
 			path = "Points Watch App";
@@ -326,6 +329,7 @@
 			files = (
 				A61714B72CAE7ED800DC7403 /* SettingsView.swift in Sources */,
 				A6B8C0F42C8A0147005081D7 /* ContentView.swift in Sources */,
+				A6D4E9A62CB3F5FF005F549B /* Settings.swift in Sources */,
 				A6B8C1222C8A018E005081D7 /* HistoryView.swift in Sources */,
 				A69B258A2CAE7C380043346A /* MatchSetupView.swift in Sources */,
 				A6B8C0F22C8A0147005081D7 /* PointsApp.swift in Sources */,
@@ -496,6 +500,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Points Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = W224KQMZ9C;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Points;
@@ -525,6 +530,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Points Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = W224KQMZ9C;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Points;
@@ -552,12 +558,17 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = W224KQMZ9C;
 				INFOPLIST_KEY_CFBundleDisplayName = Points;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = App.Points;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
+				SDKROOT = watchos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				WATCHOS_DEPLOYMENT_TARGET = 9.6;
 			};
 			name = Debug;
 		};
@@ -566,13 +577,18 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = W224KQMZ9C;
 				INFOPLIST_KEY_CFBundleDisplayName = Points;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = App.Points;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
+				SDKROOT = watchos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 9.6;
 			};
 			name = Release;
 		};

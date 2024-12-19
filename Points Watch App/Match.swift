@@ -1,38 +1,73 @@
-// Import the Foundation framework for basic types
 import Foundation
+import Combine
 
-// Define the Match struct to represent a match record
-struct Match: Identifiable {
-    // Unique identifier for the match
-    let id = UUID()
-    
-    // Match details
-    let sport: String                    // Sport type
-    let pointsP1: Int                    // Points or sets for Player 1
-    let pointsP2: Int                    // Points or sets for Player 2
-    var matchType: MatchSetupView.MatchType // Type of match (1 vs 1 or 2 vs 2)
-    var avatars: [String]                // Avatars representing players
-    
-    // Date when the match was recorded
-    let date = Date()
+enum MatchType: String, Codable {
+    case oneVsOne
+    case twoVsTwo
 }
 
-// Define the MatchHistory class to manage match records
-class MatchHistory: ObservableObject {
-    // Published array of matches to notify views of changes
-    @Published var matches: [Match] = []
+struct Match: Identifiable, Codable {
+    let id: UUID
+    let sport: String
+    let pointsP1: Int
+    let pointsP2: Int
+    var matchType: MatchType
+    var avatars: [String]
+    let date: Date
     
-    // Function to add a new match to the history
+    init(
+        id: UUID = UUID(),
+        sport: String,
+        pointsP1: Int,
+        pointsP2: Int,
+        matchType: MatchType,
+        avatars: [String],
+        date: Date = Date()
+    ) {
+        self.id = id
+        self.sport = sport
+        self.pointsP1 = pointsP1
+        self.pointsP2 = pointsP2
+        self.matchType = matchType
+        self.avatars = avatars
+        self.date = date
+    }
+}
 
-    func addMatch(_ match: Match) {
-        matches.insert(match, at: 0) // Insert the new match at the beginning
-        if matches.count > 15 {
-            matches.removeLast() // Remove the oldest match
+class MatchHistory: ObservableObject {
+    @Published var matches: [Match] = [] {
+        didSet {
+            saveMatches()
         }
     }
-    
-    // Function to clear all match records from the history
+
+    init() {
+        loadMatches()
+    }
+
+    func addMatch(_ match: Match) {
+        matches.insert(match, at: 0)
+        if matches.count > 25 {
+            matches.removeLast()
+        }
+    }
+
     func clearHistory() {
         matches.removeAll()
+    }
+
+    private func saveMatches() {
+        let encoder = JSONEncoder()
+        if let data = try? encoder.encode(matches) {
+            UserDefaults.standard.set(data, forKey: "matches")
+        }
+    }
+
+    private func loadMatches() {
+        let decoder = JSONDecoder()
+        if let data = UserDefaults.standard.data(forKey: "matches"),
+           let decodedMatches = try? decoder.decode([Match].self, from: data) {
+            matches = decodedMatches
+        }
     }
 }

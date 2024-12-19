@@ -1,31 +1,21 @@
 import SwiftUI
 
 struct SettingsView: View {
-    // Binding variables for sports and selected sports
-    @Binding var sports: [String]
-    @Binding var selectedSports: Set<String>
-    
-    // State variable to control the display of the MenuView
+    @EnvironmentObject var settings: Settings
     @State private var showMenuView = false
-    // State variable to control the display of the MenuView
-    @State private var showColorThemeView = false
 
     var body: some View {
         VStack {
-            // Menu view button
             menuViewButton()
-            colorTheme()
-            
-            Spacer() // Pushes content to the top
+            Spacer()
         }
         .padding()
-        .padding(.top, 10) // Add safe area padding at the top to avoid collapsing with the title
+        .padding(.top, 10)
         .navigationTitle("Settings")
     }
-    
+
     // MARK: - UI Components
 
-    // Button for displaying the Menu View
     func menuViewButton() -> some View {
         HStack {
             Text("Menu View")
@@ -42,171 +32,89 @@ struct SettingsView: View {
             showMenuView = true
         }
         .sheet(isPresented: $showMenuView) {
-            MenuView(sports: $sports, selectedSports: $selectedSports)
+            MenuView()
+                .environmentObject(settings)
         }
     }
-    
-    // Button for displaying the Color Theme
-    func colorTheme() -> some View {
-            HStack {
-                Text("Choose Theme")
-                    .font(.system(size: 14))
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
-            }
-            .padding()
-            .padding(.vertical, 6)
-            .background(Color.gray.opacity(0.1))
-            .cornerRadius(10)
-            .onTapGesture {
-                showColorThemeView = true
-            }
-            .sheet(isPresented: $showColorThemeView) {
-                ColorThemeSelectionView()
-            }
-        }
 }
 
-// Define the MenuView to manage the sports selection and reordering
 struct MenuView: View {
-    @Binding var sports: [String]
-    @Binding var selectedSports: Set<String>
-    
-    // Determine if the screen size is small
+    @EnvironmentObject var settings: Settings
+
     var isSmallScreen: Bool {
         WKInterfaceDevice.current().screenBounds.width < 170
     }
-    
-    
+
     var body: some View {
         ScrollView {
             VStack {
-                // Sort and display sports, with selected ones at the top
-                ForEach(sports.filter { selectedSports.contains($0) } + sports.filter { !selectedSports.contains($0) }, id: \.self) { sport in
-                    if let index = sports.firstIndex(of: sport) {
-                        reorderableRow(for: index, sport: sport)
+                let sortedSports = settings.sports.filter { settings.selectedSports.contains($0) } +
+                                   settings.sports.filter { !settings.selectedSports.contains($0) }
+
+                ForEach(sortedSports, id: \.self) { sport in
+                    let isSelected = settings.selectedSports.contains(sport)
+                    if let index = settings.sports.firstIndex(of: sport) {
+                        reorderableRow(for: index, sport: sport, isSelected: isSelected)
                     }
                 }
-                Spacer() // Adds extra space at the bottom
+                
+                Spacer()
                     .frame(height: 30)
             }
         }
         .padding()
-        .edgesIgnoringSafeArea(.bottom) // Ignore bottom safe area to allow full scrolling
+        .edgesIgnoringSafeArea(.bottom)
     }
-    
-    
-    
+
     // MARK: - UI Components
 
-    // Creates a row for each sport that can be reordered and toggled
-    @ViewBuilder
-    private func reorderableRow(for index: Int, sport: String) -> some View {
+    private func reorderableRow(for index: Int, sport: String, isSelected: Bool) -> some View {
         HStack {
-            // Button to move the sport up in the list
-            moveUpButton(for: index)
-
-            // Toggle for selecting or deselecting a sport
+            if isSelected {
+                moveUpButton(for: index)
+            }
             sportToggle(for: sport)
         }
-        .padding(.vertical, 15) // Adjust vertical padding
+        .padding(.vertical, 15)
         .padding(.horizontal)
         .background(Color.gray.opacity(0.1))
         .cornerRadius(10)
     }
 
-    // Button for moving an item up in the list
     private func moveUpButton(for index: Int) -> some View {
         Button(action: {
             moveItemUp(from: index)
         }) {
             Image(systemName: "arrow.up")
                 .resizable()
-                .frame(width: isSmallScreen ? 10 : 12, height: isSmallScreen ? 10 : 12) // Adjust arrow size based on screen size
+                .frame(width: isSmallScreen ? 10 : 12, height: isSmallScreen ? 10 : 12)
                 .foregroundColor(.blue)
         }
-        .buttonStyle(.plain) // Remove default button styling
+        .buttonStyle(.plain)
         .padding(.trailing, isSmallScreen ? 5 : 10)
     }
 
-    // Toggle for selecting or deselecting a sport
     private func sportToggle(for sport: String) -> some View {
         Toggle(isOn: Binding(
-            get: { selectedSports.contains(sport) },
+            get: { settings.selectedSports.contains(sport) },
             set: { isSelected in
                 if isSelected {
-                    selectedSports.insert(sport)
+                    settings.selectedSports.insert(sport)
                 } else {
-                    selectedSports.remove(sport)
+                    settings.selectedSports.remove(sport)
                 }
             }
         )) {
             Text(sport)
-                .font(.system(size: isSmallScreen ? 12 : 14)) // Adjust font size based on screen size
+                .font(.system(size: isSmallScreen ? 12 : 14))
         }
     }
 
-    // MARK: - Helper Functions
-
-    // Function to move an item up in the list
     private func moveItemUp(from index: Int) {
-        guard index > 0 else { return } // Prevent moving the first item up
-        sports.swapAt(index, index - 1)
-    }
-}
-
-// Define a simple ColorThemeSelectionView for choosing light or dark mode
-struct ColorThemeSelectionView: View {
-    // Enum representing available color themes
-    enum ColorTheme: String, CaseIterable, Identifiable {
-        case light = "Light Mode"
-        case dark = "Dark Mode"
-        
-        var id: String { self.rawValue }
-    }
-    
-    // Persist the selected theme using @AppStorage
-    @AppStorage("selectedColorTheme") private var selectedColorTheme: ColorTheme = .light
-    
-    var body: some View {
-        VStack {
-            Text("Select Theme")
-                .font(.headline)
-                .padding(.top)
-            
-            List {
-                ForEach(ColorTheme.allCases) { theme in
-                    Button(action: {
-                        selectedColorTheme = theme
-                    }) {
-                        HStack {
-                            Text(theme.rawValue)
-                                .font(.body)
-                            Spacer()
-                            if selectedColorTheme == theme {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(.blue)
-                            }
-                        }
-                    }
-                    
-                }
-            }
-            .listStyle(CarouselListStyle()) // Suitable for watchOS
-            
+        guard index > 0 else { return }
+        if settings.selectedSports.contains(settings.sports[index]) &&
+            settings.selectedSports.contains(settings.sports[index - 1]) {
+            settings.sports.swapAt(index, index - 1)
         }
-        .padding(.horizontal)
     }
-}
-
-// Preview provider for SwiftUI previews
-struct SettingsView_Previews: PreviewProvider {
-    @State static var sports = ["Tennis", "Badminton", "Ping Pong", "Squash", "Padel"]
-    @State static var selectedSports: Set<String> = ["Tennis", "Badminton"]
-
-    static var previews: some View {
-        SettingsView(sports: $sports, selectedSports: $selectedSports)
-    }
-    
 }

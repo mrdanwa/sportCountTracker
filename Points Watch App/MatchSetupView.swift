@@ -1,17 +1,23 @@
-// MatchSetupView.swift
-
 import SwiftUI
+import Foundation
 
 struct MatchSetupView: View {
-    // The sport selected (passed from ContentView)
     var sport: String
     @Binding var path: [Screen]
 
-    // State variables for match setup
     @State private var matchType: MatchType?
     @State private var currentStep: MatchSetupStep = .chooseMatchType
     @State private var selectedAvatars: [String] = []
-    @State private var availableAvatars: [String] = ["person.circle", "dog.circle", "cat.circle", "fish.circle", "bird.circle", "hare.circle", "tortoise.circle", "ladybug.circle"]
+    @State private var availableAvatars: [String] = [
+        "person.circle",
+        "dog.circle",
+        "cat.circle",
+        "fish.circle",
+        "bird.circle",
+        "hare.circle",
+        "tortoise.circle",
+        "ladybug.circle"
+    ]
     
     @State private var isSetOption: Bool?
     @State private var customSetPoints: Int = 10
@@ -20,13 +26,6 @@ struct MatchSetupView: View {
         return sport == "Football"
     }
 
-    // Enumeration for match types
-    enum MatchType {
-        case oneVsOne
-        case twoVsTwo
-    }
-
-    // Enumeration for match setup steps
     enum MatchSetupStep: Equatable {
         case chooseSetOption
         case chooseSetPoints
@@ -50,6 +49,7 @@ struct MatchSetupView: View {
                 readyToStartView()
             }
         }
+        .navigationBarHidden(false)
         .onAppear {
             if sport == "Custom" {
                 currentStep = .chooseSetOption
@@ -61,9 +61,8 @@ struct MatchSetupView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    // MARK: - UI Components
+    // MARK: - Views
 
-    // View for choosing between Set and No Set
     func chooseSetOptionView() -> some View {
         VStack {
             Text("Choose Type")
@@ -100,7 +99,6 @@ struct MatchSetupView: View {
         }
     }
 
-    // View for choosing the number of points per set
     func chooseSetPointsView() -> some View {
         VStack {
             Text("Points per Set")
@@ -148,7 +146,6 @@ struct MatchSetupView: View {
         }
     }
 
-    // View for choosing the match type (1 vs 1 or 2 vs 2)
     func chooseMatchTypeView() -> some View {
         VStack {
             Text("Match Type")
@@ -186,11 +183,9 @@ struct MatchSetupView: View {
         }
     }
 
-    // View for choosing avatars for each player
     func chooseAvatarView(for playerNumber: Int) -> some View {
         VStack {
             Text(isTeams ? "Choose Team \(playerNumber)" : "Choose Player \(playerNumber)")
-
                 .font(.headline)
                 .padding()
             
@@ -213,7 +208,6 @@ struct MatchSetupView: View {
         }
     }
 
-    // View for displaying the ready-to-start match setup
     func readyToStartView() -> some View {
         VStack {
             if matchType == .oneVsOne {
@@ -280,9 +274,8 @@ struct MatchSetupView: View {
         }
     }
 
-    // MARK: - Helper Functions
+    // MARK: - Helper
 
-    // Selects an avatar and updates the setup flow
     func selectAvatar(_ avatar: String, for playerNumber: Int) {
         selectedAvatars.append(avatar)
         if let index = availableAvatars.firstIndex(of: avatar) {
@@ -299,7 +292,6 @@ struct MatchSetupView: View {
     }
 }
 
-// Preview provider for SwiftUI previews
 struct MatchSetupView_Previews: PreviewProvider {
     @State static var path: [Screen] = []
     static var previews: some View {

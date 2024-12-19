@@ -1,45 +1,58 @@
-// Settings.swift
-
 import Foundation
 import Combine
 
 class Settings: ObservableObject {
-    @Published var sports: [String] {
+    @Published var sports: [String] = [
+        "Tennis",
+        "Badminton",
+        "Ping Pong",
+        "Squash",
+        "Padel",
+        "Football",
+        "Custom"
+    ] {
         didSet {
-            saveSettings()
+            saveSports()
         }
     }
-    @Published var selectedSports: Set<String> {
+
+    @Published var selectedSports: Set<String> = [
+        "Tennis",
+        "Badminton",
+        "Ping Pong",
+        "Squash",
+        "Padel",
+        "Football",
+        "Custom"
+    ] {
         didSet {
-            saveSettings()
+            saveSelectedSports()
         }
     }
 
     init() {
-        sports = ["Tennis", "Badminton", "Ping Pong", "Squash", "Padel", "Football", "Custom"]
-        selectedSports = ["Tennis", "Badminton", "Ping Pong", "Squash", "Padel", "Football", "Custom"]
-        loadSettings()
+        loadSports()
+        loadSelectedSports()
     }
 
-    func saveSettings() {
-        let encoder = JSONEncoder()
-        if let sportsData = try? encoder.encode(sports) {
-            UserDefaults.standard.set(sportsData, forKey: "Sports")
-        }
-        if let selectedSportsData = try? encoder.encode(Array(selectedSports)) {
-            UserDefaults.standard.set(selectedSportsData, forKey: "SelectedSports")
+    private func saveSports() {
+        UserDefaults.standard.set(sports, forKey: "sports")
+    }
+
+    private func loadSports() {
+        if let savedSports = UserDefaults.standard.stringArray(forKey: "sports") {
+            sports = savedSports
         }
     }
 
-    func loadSettings() {
-        let decoder = JSONDecoder()
-        if let sportsData = UserDefaults.standard.data(forKey: "Sports"),
-           let decodedSports = try? decoder.decode([String].self, from: sportsData) {
-            sports = decodedSports
-        }
-        if let selectedSportsData = UserDefaults.standard.data(forKey: "SelectedSports"),
-           let decodedSelectedSports = try? decoder.decode([String].self, from: selectedSportsData) {
-            selectedSports = Set(decodedSelectedSports)
+    private func saveSelectedSports() {
+        let sportsArray = Array(selectedSports)
+        UserDefaults.standard.set(sportsArray, forKey: "selectedSports")
+    }
+
+    private func loadSelectedSports() {
+        if let savedSports = UserDefaults.standard.stringArray(forKey: "selectedSports") {
+            selectedSports = Set(savedSports)
         }
     }
 }
